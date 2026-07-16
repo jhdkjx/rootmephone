@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rootme 漏洞页面</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      text-decoration: none;
+      transition: 0.25s;
+    }
+
+    body {
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      --color: #E1E1E1;
+      background-color: #F3F3F3;
+      background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent),
+      linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent);
+      background-size: 55px 55px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 5rem;
+    }
+
+    .container .top {
+      display: flex;
+      gap: 5rem;
+    }
+
+    .container .bottom {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .fx-layer {
+      filter: contrast(3);
+    }
+
+    .box {
+      --w: 100px;
+      --h: 100px;
+      --r: 9999px;
+      --tr: 25%;
+      z-index: 500;
+      position: relative;
+      width: var(--w);
+      height: var(--h);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: var(--r);
+      border: 1px double rgba(51, 51, 51, 0.08);
+      box-shadow:
+        inset 2px -2px 1px -1px rgba(255, 255, 255, 0.9),
+        inset -2px 2px 1px -1px rgba(255, 255, 255, 0.9),
+        inset 6px -6px 1px -6px rgba(255, 255, 255, 0.55),
+        inset -6px 6px 1px -6px rgba(255, 255, 255, 0.55),
+        inset 0 0 2px rgba(0, 0, 0, 0.8),
+        0 4px 8px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(2px);
+      cursor: pointer;
+      filter: brightness(0.9);
+    }
+
+    .box svg {
+      width: 28px;
+      filter: drop-shadow(0 25px 3px rgba(102, 102, 102, 0.2));
+    }
+
+    .box span {
+      filter: drop-shadow(0 25px 3px rgba(102, 102, 102, 0.15));
+    }
+
+    .box:before {
+      content: '';
+      position: absolute;
+      z-index: 1;
+      top: 35%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(var(--w) - 16px);
+      height: calc(var(--h) - 16px);
+      border-radius: var(--r);
+      border: 1px solid rgba(0, 0, 0, 0.9);
+      filter: blur(8px);
+    }
+
+    .box:after {
+      z-index: 501;
+      content: '';
+      position: absolute;
+      width: var(--w);
+      height: var(--h);
+      border-radius: var(--r);
+      filter: blur(3px);
+      background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.8) 0%,
+        transparent var(--tr),
+        transparent calc(100% - var(--tr)),
+        rgba(255, 255, 255, 0.8) 100%
+      );
+    }
+
+    .box .circle-overlay {
+      position: absolute;
+      width: calc(var(--w) - 9px);
+      height: calc(var(--h) - 9px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--r);
+      filter: blur(1px);
+    }
+
+    .start-btn {
+      padding: 1.2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .start-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .start-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .start-btn span {
+      font-size: 28px;
+      font-family: "微软雅黑", serif;
+      color: #3e3e3e;
+      white-space: nowrap;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .start-btn .btn-icon {
+      width: 56px;
+      height: 56px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(62, 62, 62, 0.85);
+      border-radius: 50%;
+      box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .start-btn .btn-icon svg {
+      width: 22px;
+      fill: #f5f5f5;
+    }
+  </style>
+</head>
+<body>
+  <div style="display:flex;flex-direction:column;gap:2rem;">
+    <a class="start-btn" href="/lonStack/CVE-2026-43499/">
+      <span>安卓网页提权漏洞(lonStack-CVE-2026-43499)</span>
+      <div class="btn-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
+    </a>
+    <a class="start-btn" href="/FK_Selinux_Qualcomm/index.html">
+      <span>通过高通fastboot校验漏洞宽容SELinux以获得临时root</span>
+      <div class="btn-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
+    </a>
+    <a class="start-btn" href="symbols.html">
+      <span>在线提取Image镜像字符表</span>
+      <div class="btn-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
+    </a>
+    <a class="start-btn" href="/CVE-2025-21479/index.html">
+      <span>高通骁龙GPU驱动漏洞(CVE-2025-21479)</span>
+      <div class="btn-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
+    </a>
+    <a class="start-btn" href="/MTK_BROM/index.html">
+      <span>MTK BROM 网页连接工具(WebUSB)</span>
+      <div class="btn-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
+    </a>
+  </div>
+</body>
+</html>
